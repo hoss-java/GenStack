@@ -1,0 +1,6 @@
+# Push files/folders from develop to main.
+GenStack/
+restclient/
+sql/
+tools/
+screenshots/

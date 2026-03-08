@@ -1,0 +1,259 @@
+#!/bin/bash
+
+# Function to run the Maven command inside the Docker container
+# @param $1 The command to execute (e.g., mvm@maven, mysql@mysql)
+# @param $# Additional arguments to be passed to the command
+# @return 0 if the command runs successfully, non-zero exit code otherwise
+container-run() {
+    # Initialize an array to hold directive names
+    local directives=()
+    local non_directives=()
+    local exec_cmd="$1"
+    local docker_name=$(echo "$1" | awk -F@ '{ print $2 }')
+    shift  # Shift to process the remaining arguments
+
+    # Function to get the command based on the provided exec_cmd
+    # @param $1 The key to look up the command
+    # @return The corresponding command string if found, else an empty string
+    __get_command() {
+        # Declare the array with key-value pairs as a string
+        local commands="
+mvn@maven:mvn -f GenStack/GenStack
+javac@maven:javac
+mysql@mysql:mysql -u root -pmypass
+cli@sshd:bash
+remotemysql@sshd:mysql -u eventman -peventmanpass -h 172.32.0.16
+mongosh@sshd:mongo 172.32.0.17:27017
+cssh@sshd:ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+mongo@mongodb:mongo
+node@nodejs:node"
+
+        input="$1"
+        echo "$commands" | awk -F: -v key="$input" '$1 == key { print $2 }'
+    }
+    # Retrieve the command based on exec_cmd
+    local command_to_run
+    command_to_run=$(__get_command "$exec_cmd")
+
+    if [ -z "$command_to_run" ]; then
+        echo "Command not found for: $exec_cmd"
+        return 1
+    fi
+
+    # Loop through all provided arguments
+    for arg in "$@"; do
+        if [[ $arg == ---* ]]; then
+            # If the argument is a directive, add it to the array
+            directives+=("$arg")
+        else
+            non_directives+=("$arg")
+        fi
+    done
+
+    # Shift out the processed directives
+    set -- "${non_directives[@]}" # Retain only the non-directive arguments for the command
+
+    local output=""
+    local exit_code=1
+
+    # Check for the ---noit directive and run the appropriate Docker command
+    if [[ " ${directives[@]} " =~ " ---noit " ]]; then
+        # Capture the output of the Docker command without TTY
+        set -x
+        output=$(docker exec "$docker_name" $command_to_run "$@")
+        set +x
+        exit_code=$?
+    elif [[ " ${directives[@]} " =~ " ---it " ]]; then
+        # Run with -it option for interactive mode
+        set -x
+        docker exec -it "$docker_name" $command_to_run "$@"
+        set +x
+        exit_code=$?
+    elif [[ " ${directives[@]} " =~ " ---i " ]]; then
+        # Run with -i only for interactive input
+        set -x
+        docker exec -i "$docker_name" $command_to_run "$@"
+        set +x
+        exit_code=$?
+    else
+        # Default: use -it for interactive unless specified otherwise
+        set -x
+        docker exec -it "$docker_name" $command_to_run "$@"
+        set +x
+        exit_code=$?
+    fi
+
+    # Print the output if the exit code is not 0
+    if [ $exit_code -ne 0 ]; then
+        echo "Error running Docker command:"
+        echo "$output"
+    elif [[ ! " ${directives[@]} " =~ " ---quiet " ]]; then
+        # If ---quiet is not present, print the output anyway
+        echo "$output"
+    fi
+
+    # Return the exit status
+    return $exit_code
+}
+
+# Function to check the status of a Docker container
+# @param $1 The name of the container to check (e.g., maven, mysql)
+# @param $# Additional arguments to be passed to the command
+# @return 0 if the container is running, non-zero exit code otherwise
+container-status() {
+    # Initialize an array to hold directive names
+    local directives=()
+    local non_directives=()
+    local interactive_flag="-it"  # Default to interactive mode
+
+    # Loop through all provided arguments
+    for arg in "$@"; do
+        if [[ $arg == ---* ]]; then
+            # If the argument is a directive, add it to the array
+            directives+=("$arg")
+        else
+            non_directives+=("$arg")
+        fi
+    done
+
+    # Shift the processed arguments
+    set -- "${non_directives[@]}" # Retain only the non-directive arguments for the command
+
+    local output=""
+    local exit_code=0
+
+    # Define colors for output
+    RED='\033[0;31m'
+    GREEN='\033[0;32m'
+    NC='\033[0m' # No Color
+
+    # Loop through each provided container
+    for container in "$@"; do
+        # Get the status of the container
+        status=$(docker inspect -f '{{.State.Status}}' "$container" 2>/dev/null)
+
+        # Check if the status was retrieved successfully
+        if [[ $? -ne 0 ]]; then
+            echo -e "${RED}${container} does not exist.${NC}"
+            continue
+        fi
+        # Check if the container is running
+        if [[ "$status" == "running" ]]; then
+            echo -e "${GREEN}${container} is running.${NC}"
+
+            # Get the internal IP address of the container
+            internal_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$container")
+
+            # Get the port mappings
+            port_mappings=$(docker inspect -f '{{.NetworkSettings.Ports}}' "$container")
+
+            # Format port mappings
+            if [[ "$port_mappings" == "map[]" ]]; then
+                port_output="No ports mapped."
+            else
+                # Extract and format ports with protocol
+                port_output=$(echo "$port_mappings" | \
+                    grep -oE '[0-9]+/(tcp|udp)' | \
+                    sed -E 's/([0-9]+)\/(tcp|udp)/\1\/\2/' | \
+                    tr '\n' ' ' | \
+                    sed 's/ $//')  # Remove trailing space
+
+                # Limit to 3 ports and append "..."
+                port_array=($port_output)
+                if ((${#port_array[@]} > 3)); then
+                    port_output="${port_array[0]} ${port_array[1]} ${port_array[2]} ..."
+                fi
+            fi
+
+            if [[ ! " ${directives[@]} " =~ " ---quiet " ]]; then
+                # Display the internal IP and port mappings
+                echo -e "  Internal IP: ${internal_ip}"
+                echo -e "  Port Mappings: ${port_output:-No ports mapped.}"
+            fi
+
+        else
+            exit_code=1
+            echo -e "${RED}${container} is not running. Status: ${status}.${NC}"
+
+            # Provide additional information if the container is stopped or exited
+            if [[ "$status" == "exited" ]]; then
+                echo "More information about the container:"
+                docker logs "$container" --tail 20 2>/dev/null
+            fi
+        fi
+    done
+    # Return the exit status
+    return $exit_code
+}
+
+# Function to run Maven command in a Docker container
+# @param $# Additional arguments to be passed to the Maven command
+# @return The exit status of the container_run function
+mvn() {
+    container-run mvn@maven "$@"
+    return $?
+}
+
+# Function to run Java compiler in a Docker container
+# @param $# Additional arguments to be passed to the javac command
+# @return The exit status of the container_run function
+javac() {
+    container-run javac@maven "$@"
+    return $?
+}
+
+# Function to run Java command in a Docker container
+# @param $# Additional arguments to be passed to the java command
+# @return The exit status of the container_run function
+javad() {
+    container-run java@maven "$@"
+    return $?
+}
+
+# Function to run MySQL command in a Docker container
+# @param $# Additional arguments to be passed to the MySQL command
+# @return The exit status of the container_run function
+mysql() {
+    container-run mysql@mysql "$@"
+    return $?
+}
+
+# Function to run CLI command in a Docker container
+# @param $# Additional arguments to be passed to the CLI command
+# @return The exit status of the container_run function
+cli() {
+    container-run cli@sshd "$@"
+    return $?
+}
+
+cssh() {
+    container-run cssh@sshd "$@"
+    return $?
+}
+
+# Function to run remote MySQL command in a Docker container
+# @param $# Additional arguments to be passed to the remote MySQL command
+# @return The exit status of the container_run function
+remotemysql() {
+    container-run remotemysql@sshd "$@"
+    return $?
+}
+
+mongosh() {
+    container-run mongosh@sshd "$@"
+    return $?
+}
+
+mongo() {
+    container-run mongo@mongodb "$@"
+    return $?
+}
+
+node() {
+    container-run node@nodejs "$@"
+    return $?
+}
+
+# Main code block
+# Check the status of specified containers
+container-status maven mysql sshd mongodb

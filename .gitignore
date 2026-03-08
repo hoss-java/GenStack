@@ -1,0 +1,29 @@
+# Ignore files and file types
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+**/coverage/
+
+# production
+build/
+**/build/
+bin/
+**/bin/
+pack/
+**/pack/
+target/
+#**/target/
+
+# misc
+*.pyc
+*.log
+*.tmp
+*.apk
+*.jar
+test.sh
+.DS_Store

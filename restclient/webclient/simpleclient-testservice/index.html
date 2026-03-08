@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REST API Tester with Status Check</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div style="flex: 1;"></div>
+            <div style="flex: 1; text-align: center;">
+                <h1>REST API Tester</h1>
+                <p>Test the REST API endpoints (with real-time status monitoring)</p>
+            </div>
+            <div style="flex: 1; text-align: right;">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <span id="themeLabel">Dark</span>
+                    <div class="theme-toggle-switch" id="themeSwitch"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <div class="status-info">
+                    <div class="status-indicator checking" id="statusIndicator"></div>
+                    <div class="status-text">
+                        <strong id="statusText">Checking...</strong>
+                        <small id="statusDetails">Connecting to REST service...</small>
+                    </div>
+                </div>
+                <button class="refresh-btn" onclick="checkStatus()">🔄 Refresh Status</button>
+            </div>
+            
+            <!-- Alert Messages -->
+            <div id="alert" class="alert"></div>
+            
+            <!-- API Form -->
+            <div class="form-group">
+                <label for="endpoint">Endpoint Path</label>
+                <input type="text" id="endpoint" placeholder="/get" value="/get">
+            </div>
+            
+            <div class="button-group">
+                <button onclick="testAPI()" id="sendBtn">🚀 Send Request</button>
+                <button class="clear-btn" onclick="clearResults()">🗑️ Clear</button>
+            </div>
+            
+            <!-- Response Section -->
+            <div class="response-section" id="responseSection" style="display: none;">
+                <h2>Response</h2>
+                <div class="response-box" id="responseBox"></div>
+                <button class="copy-btn" onclick="copyResponse()">📋 Copy Response</button>
+            </div>
+            
+            <div id="emptyState" class="empty-state">
+                <p>✓ Service is online. Enter an endpoint and click "Send Request"</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
