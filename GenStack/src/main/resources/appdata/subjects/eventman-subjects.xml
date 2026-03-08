@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <!-- Action aliases for mapping similar actions -->
+    <aliases>
+        <alias from="getsall" to="gets"/>
+    </aliases>
+
+    <!-- Configuration for actions and field types -->
+    <config>
+        <actions>
+            <action name="add" description="Add a {identifier}"/>
+            <action name="gets" description="Search/List {identifier}s"/>
+            <action name="getsall" description="List all {identifier}s"/>
+            <action name="remove" description="Remove {identifier}"/>
+        </actions>
+        <fieldTypes>
+            <fieldType name="date" compareMode="&lt;="/>
+            <fieldType name="time" compareMode="&lt;="/>
+            <fieldType name="str" compareMode="contains"/>
+            <fieldType name="int" compareMode="="/>
+            <fieldType name="unsigned" compareMode="="/>
+            <fieldType name="duration" compareMode="="/>
+        </fieldTypes>
+    </config>
+
+    <!-- Subject definitions -->
+    <subjects namespace="eventmanapp" description="An event managment app" storage="mongodb">
+        <subject identifier="event" description="Event">
+            <actions>
+                <action name="add"/>
+                <action name="remove"/>
+                <action name="gets"/>
+                <action name="getsall" noargs="true"/>
+            </actions>
+            <field name="id" field="id" type="int" mandatory="true" modifier="auto">
+                <defaults>
+                    <default action="init" value="1" type="literal"/>
+                    <default action="add" value="1" type="literal"/>
+                </defaults>
+                <usedby>
+                    <action name="add"/>
+                </usedby>
+            </field>
+            <field name="title" field="title" description="Title" type="str" mandatory="true" modifier="user">
+                <defaults>
+                    <default action="init" value="workshop" type="literal"/>
+                    <default action="add" value="workshop" type="literal"/>
+                    <default action="gets" value="" type="literal"/>
+                </defaults>
+                <usedby>
+                    <action name="add"/>
+                    <action name="remove"/>
+                    <action name="gets" mandatory="false"/>
+                </usedby>
+            </field>
+            <field name="location" field="location" description="Location" type="str" mandatory="false" modifier="user">
+                <defaults>
+                    <default action="init" value="here" type="literal"/>
+                    <default action="add" value="here" type="literal"/>
+                </defaults>
+                <usedby>
+                    <action name="add"/>
+                    <action name="remove"/>
+                    <action name="gets" mandatory="false"/>
+                </usedby>
+            </field>
+            <field name="capacity" field="capacity" description="Capacity" type="unsigned" mandatory="false" modifier="user">
+                <defaults>
+                    <default action="init" value="1" type="literal"/>
+                    <default action="add" value="1" type="literal"/>
+                </defaults>
+                <usedby>
+                    <action name="add"/>
+                    <action name="remove"/>
+                    <action name="gets" mandatory="false"/>
+                </usedby>
+            </field>
+            <field name="date" field="date" description="Date" type="date" mandatory="false" modifier="user">
+                <defaults>
+                    <default action="init" value="%DATE%" type="token"/>
+                    <default action="add" value="%DATE%" type="token"/>
+                </defaults>
+                <usedby>
+                    <action name="add"/>
+                    <action name="remove"/>
+                    <action name="gets" mandatory="false"/>
+                </usedby>
+            </field>
+            <field name="starttime" field="starttime" description="Time" type="time" mandatory="false" modifier="user">
+                <defaults>
+                    <default action="init" value="%TIME%" type="token"/>
+                    <default action="add" value="%TIME%" type="token"/>
+                </defaults>
+                <usedby>
+                    <action name="add"/>
+                    <action name="remove"/>
+                    <action name="gets" mandatory="false"/>
+                </usedby>
+            </field>
+            <field name="duration" field="duration" description="Duration" type="duration" mandatory="false" modifier="user">
+                <defaults>
+                    <default action="init" value="PT1H" type="literal"/>
+                    <default action="add" value="PT1H" type="literal"/>
+                </defaults>
+                <usedby>
+                    <action name="add"/>
+                    <action name="remove"/>
+                    <action name="gets" mandatory="false"/>
+                </usedby>
+            </field>
+        </subject>
+        <subject identifier="participant" description="Participant">
+            <actions>
+                <action name="add"/>
+                <action name="remove"/>
+                <action name="gets"/>
+                <action name="getsall" noargs="true"/>
+            </actions>
+            <field name="id" field="id" type="int" mandatory="true" modifier="auto">
+                <defaults>
+                    <default action="init" value="1" type="literal"/>
+                    <default action="add" value="1" type="literal"/>
+                </defaults>
+                <usedby>
+                    <action name="add"/>
+                </usedby>
+            </field>
+            <field name="name" field="name" description="Name" type="str" mandatory="true" modifier="user">
+                <defaults>
+                    <default action="init" value="" type="literal"/>
+                    <default action="add" value="" type="literal"/>
+                </defaults>
+                <usedby>
+                    <action name="add"/>
+                    <action name="remove"/>
+                    <action name="gets" mandatory="false"/>
+                </usedby>
+            </field>
+            <field name="email" field="email" description="Email" type="str" mandatory="false" modifier="user">
+                <usedby>
+                    <action name="add"/>
+                    <action name="remove"/>
+                    <action name="gets"/>
+                </usedby>
+            </field>
+        </subject>
+        <subject identifier="organize" description="Organize">
+            <actions>
+                <action name="add"/>
+                <action name="remove"/>
+                <action name="gets"/>
+                <action name="getsall" noargs="true"/>
+            </actions>
+            <field name="id" field="id" type="int" mandatory="true" modifier="auto">
+                <defaults>
+                    <default action="init" value="1" type="literal"/>
+                    <default action="add" value="1" type="literal"/>
+                </defaults>
+                <usedby>
+                    <action name="add"/>
+                </usedby>
+            </field>
+            <field name="eventid" field="eventid" referencedfield="id:event.title" description="Event id" type="int" mandatory="true" modifier="user">
+                <defaults>
+                    <default action="init" value="0" type="literal"/>
+                    <default action="add" value="0" type="literal"/>
+                </defaults>
+                <usedby>
+                    <action name="add" description="Event" />
+                    <action name="remove" description="Event" />
+                    <action name="gets" description="Event" mandatory="false"/>
+                </usedby>
+            </field>
+            <field name="participantid" field="participantid" referencedfield="id:participant.name" description="Participant id" type="int" mandatory="true" modifier="user">
+                <defaults>
+                    <default action="init" value="0" type="literal"/>
+                    <default action="add" value="0" type="literal"/>
+                </defaults>
+                <usedby>
+                    <action name="add" description="Participant" />
+                    <action name="remove" description="Participant" />
+                    <action name="gets" description="Participant" mandatory="false"/>
+                </usedby>
+            </field>
+        </subject>
+    </subjects>
+</root>

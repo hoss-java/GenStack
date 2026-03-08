@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <configuration>
+        <handlers>
+            <handler>com.GenStack.handlers.EventObjectHandler</handler>
+            <handler>com.GenStack.handlers.ParticipantObjectHandler</handler>
+            <handler>com.GenStack.handlers.OrganizeObjectHandler</handler>
+        </handlers>
+        <interfaces>
+            <interface name="com.GenStack.interfaces.ConsoleInterface" runInBackground="false"/>
+            <interface name="com.GenStack.interfaces.RemoteInterface" runInBackground="false"/>
+            <interface name="com.GenStack.interfaces.SshClientInterface" runInBackground="false"/>
+            <interface name="com.GenStack.interfaces.RESTInterface" runInBackground="true"/>
+            <interface name="com.GenStack.interfaces.SshdInterface" runInBackground="true"/>
+        </interfaces>
+    </configuration>
+</root>

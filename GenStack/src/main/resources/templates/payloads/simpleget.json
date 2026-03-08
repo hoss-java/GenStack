@@ -1,0 +1,18 @@
+{
+    "identifier" : "%IDENTIFIER%",
+    "commands": [{
+		"id": "%SUBJECT%.get",	
+		"args":{
+			"%FIELD%":{
+				"field":"%FIELD%",
+				"compareMode":"%COMPAREMODE%",
+				"type":"%TYPE%",
+				"mandatory":true}
+			},
+		"data":{
+			"%FIELD%":"%VALUE%"
+			},
+		}
+	]
+
+}

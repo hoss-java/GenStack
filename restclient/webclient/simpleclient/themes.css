@@ -1,0 +1,254 @@
+/* ============================================
+   THEME DEFINITIONS
+   ============================================ */
+
+/* DARK THEME (Default) */
+[data-theme="dark"] {
+    --color-bg-primary: #1a1a1a;
+    --color-bg-secondary: #2d2d2d;
+    --color-bg-tertiary: #3a3a3a;
+    --color-text-primary: #e0e0e0;
+    --color-text-secondary: #a0a0a0;
+    --color-accent: #0066cc;
+    --color-border: #404040;
+    
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    
+    --border-radius: 6px;
+    --header-height: 80px;
+    --sidebar-width: 300px;
+    
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.5rem;
+    
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.4);
+    
+    --transition: all 0.3s ease;
+}
+
+/* LIGHT THEME */
+[data-theme="light"] {
+    --color-bg-primary: #ffffff;
+    --color-bg-secondary: #f5f5f5;
+    --color-bg-tertiary: #eeeeee;
+    --color-text-primary: #212121;
+    --color-text-secondary: #666666;
+    --color-accent: #0052a3;
+    --color-border: #e0e0e0;
+    
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    
+    --border-radius: 6px;
+    --header-height: 80px;
+    --sidebar-width: 300px;
+    
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.5rem;
+    
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+    
+    --transition: all 0.3s ease;
+}
+
+/* MINIMAL THEME - Clean, spacious, typography-focused */
+[data-theme="minimal"] {
+    --color-bg-primary: #fafafa;
+    --color-bg-secondary: #ffffff;
+    --color-bg-tertiary: #f0f0f0;
+    --color-text-primary: #1a1a1a;
+    --color-text-secondary: #808080;
+    --color-accent: #000000;
+    --color-border: #e8e8e8;
+    
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2.5rem;
+    --spacing-xl: 3.5rem;
+    
+    --border-radius: 0px;
+    --header-height: 100px;
+    --sidebar-width: 250px;
+    
+    --font-size-sm: 0.8rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.25rem;
+    --font-size-xl: 1.75rem;
+    
+    --shadow: none;
+    --shadow-lg: none;
+    
+    --transition: all 0.2s linear;
+}
+
+/* COMPACT THEME - Dense, information-heavy layout */
+[data-theme="compact"] {
+    --color-bg-primary: #0f0f0f;
+    --color-bg-secondary: #1a1a1a;
+    --color-bg-tertiary: #252525;
+    --color-text-primary: #e8e8e8;
+    --color-text-secondary: #909090;
+    --color-accent: #00ccff;
+    --color-border: #333333;
+    
+    --spacing-xs: 0.125rem;
+    --spacing-sm: 0.25rem;
+    --spacing-md: 0.5rem;
+    --spacing-lg: 0.75rem;
+    --spacing-xl: 1rem;
+    
+    --border-radius: 2px;
+    --header-height: 50px;
+    --sidebar-width: 200px;
+    
+    --font-size-sm: 0.75rem;
+    --font-size-base: 0.875rem;
+    --font-size-lg: 1rem;
+    --font-size-xl: 1.125rem;
+    
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.6);
+    
+    --transition: all 0.15s ease;
+}
+
+/* MODERN THEME - Glassmorphism, vibrant colors */
+[data-theme="modern"] {
+    --color-bg-primary: #0a0e27;
+    --color-bg-secondary: rgba(255, 255, 255, 0.05);
+    --color-bg-tertiary: rgba(255, 255, 255, 0.1);
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #b0b0b0;
+    --color-accent: #00d9ff;
+    --color-border: rgba(255, 255, 255, 0.1);
+    
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.75rem;
+    --spacing-md: 1.25rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 2.5rem;
+    
+    --border-radius: 12px;
+    --header-height: 90px;
+    --sidebar-width: 320px;
+    
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.5rem;
+    
+    --shadow: 0 8px 32px rgba(0, 217, 255, 0.1);
+    --shadow-lg: 0 8px 32px rgba(0, 217, 255, 0.2);
+    
+    --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   THEME-AWARE COMPONENT STYLES
+   ============================================ */
+
+/* Update existing elements to use variables */
+body {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    transition: var(--transition);
+}
+
+.app-header {
+    background-color: var(--color-bg-secondary);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: var(--shadow);
+    height: var(--header-height);
+    transition: var(--transition);
+}
+
+.app-main {
+    background-color: var(--color-bg-primary);
+    transition: var(--transition);
+}
+
+.menu-container {
+    padding: var(--spacing-lg);
+    gap: var(--spacing-md);
+}
+
+.console-window {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+    transition: var(--transition);
+}
+
+.console-header {
+    background-color: var(--color-bg-tertiary);
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--spacing-md);
+    transition: var(--transition);
+}
+
+/* Theme Button Styles */
+.theme-selector {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.theme-btn {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+    border: 2px solid var(--color-border);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    transition: var(--transition);
+}
+
+.theme-btn:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.theme-btn.active {
+    background-color: var(--color-accent);
+    color: var(--color-bg-primary);
+    border-color: var(--color-accent);
+}
+
+/* Modern theme specific - glassmorphism */
+[data-theme="modern"] .console-window {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="modern"] .app-header {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+}
+
+/* Minimal theme specific - no borders */
+[data-theme="minimal"] .console-window,
+[data-theme="minimal"] .app-header {
+    border: none;
+    box-shadow: none;
+}
+
+/* Compact theme - reduced padding */
+[data-theme="compact"] .console-header,
+[data-theme="compact"] .menu-container {
+    padding: var(--spacing-sm);
+}
