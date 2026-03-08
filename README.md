@@ -1,4 +1,5 @@
 # GenStack
+GenStack is a Java framework that automatically generates complete, production-ready backend and frontend applications from your database schema. Define your data model once, and GenStack handles the rest—REST APIs, database migrations, UI components, and deployment configurations—letting you focus on business logic, not boilerplate.
 [**Deck Board**](https://github.com/hoss-java/GenStack/blob/main/DECK.md)
 
 ## An introduction and overview
